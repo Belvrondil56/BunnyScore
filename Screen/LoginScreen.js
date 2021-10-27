@@ -2,24 +2,27 @@ import React, { Component, useState } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, KeyboardAvoidingView, Button, Touchable, TouchableOpacity, ImageBackground } from 'react-native';
 import InteractiveTextInput from "react-native-text-input-interactive";
 
-const ConnexionPage = () => {
+const LoginScreen = props => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const image = {uri: "./assets"};
+
+  const goToWelcome = () => {
+    props.navigation.navigate("Welcome");
+  }
 
     return (
-        <ImageBackground source={require("./assets/torpilleurlapin.jpg")} style={ styles.imgBackground } resizeMode='cover' imageStyle= 
+    <ImageBackground source={require("../assets/torpilleurlapin.jpg")} style={ styles.imgBackground } resizeMode='cover' imageStyle= 
   {{opacity:0.24}} blurRadius={1}>
-    <KeyboardAvoidingView style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}>
       
         <Text style={styles.titreApp}>Bunny Score</Text>
         <View style={styles.inputContainer} >
           <InteractiveTextInput style= {styles.input} placeholder="Entrez votre identifiant" onChangeText={username => setUsername(username)} defaultValue={username} style={{padding: 15}}/><InteractiveTextInput style= {styles.input} placeholder="Entrez votre mot de passe" onChangeText={password => setPassword(password)} defaultValue={password}/>
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
-            onPress={() => {}}
+            onPress={goToWelcome}
             style={styles.button}
           >
             <Text style={styles.buttonText}>Login</Text>
@@ -35,7 +38,6 @@ const ConnexionPage = () => {
             <Text style={styles.buttonText}>S'inscrire</Text>
           </TouchableOpacity>
       </View>
-    
     </KeyboardAvoidingView>
   </ImageBackground>
   );
@@ -101,4 +103,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ConnexionPage;
+export default LoginScreen;

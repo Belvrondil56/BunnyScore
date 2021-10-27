@@ -1,13 +1,21 @@
 import React, { Component, useState } from 'react';
-import ConnexionPage from './ConnexionPage';
+import LoginScreen from './Screen/LoginScreen';
+import WelcomeScreen from './Screen/WelcomeScreen.js';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+const {Navigator, Screen} = createNativeStackNavigator();
 
 export default function App(){
 
-
   return (
-    <ConnexionPage>
-
-    </ConnexionPage>
+    <NavigationContainer>
+      <Navigator screenOptions={{headerShown: false}}>
+        <Screen name="Login" component={LoginScreen}/>
+        <Screen name="Welcome" component={WelcomeScreen}/>
+      </Navigator>
+    </NavigationContainer>
+    
   );
 }
 
