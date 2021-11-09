@@ -1,5 +1,4 @@
-import React from "react";
-import { render } from "react-dom";
+import React, {useState} from "react";
 import {View, Text, StyleSheet, ImageBackground, KeyboardAvoidingView} from "react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import NewGame from "../Screen/NewGame"
@@ -7,14 +6,15 @@ import Profile from "../Screen/Profile"
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Games from "../Screen/Games"
 import Acceuil from "./Accueil.js"
+import LoginScreen from "./LoginScreen";
 
 
 const Tab = createMaterialBottomTabNavigator();
 const color = "red";
 
 const WelcomeScreen = props => {
-    return(
-        <Tab.Navigator>
+       return(
+        <Tab.Navigator style={styles.nav}>
             <Tab.Screen name="Accueil" component={Acceuil} options={{
                 tabBarLabel: 'Accueil',
                 tabBarIcon:({color}) => (
@@ -42,6 +42,7 @@ const WelcomeScreen = props => {
         />
         </Tab.Navigator>
     )
+    
 };
 
 const styles = StyleSheet.create({
@@ -54,6 +55,9 @@ const styles = StyleSheet.create({
         backgroundColor: "green",
         width: "100%",
         flex: 1
+    },
+    nav: {
+        backgroundColor: "white",
     }
 });
 

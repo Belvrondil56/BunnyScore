@@ -1,5 +1,4 @@
 import React from "react";
-import { render } from "react-dom";
 import {View, Text, StyleSheet, ImageBackground, KeyboardAvoidingView} from "react-native";
 
 const Games = props => {

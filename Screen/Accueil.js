@@ -1,5 +1,4 @@
 import React from "react";
-import { render } from "react-dom";
 import {View, Text, StyleSheet, ImageBackground, KeyboardAvoidingView} from "react-native";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 
@@ -9,7 +8,7 @@ const Acceuil = props => {
     {{opacity:0.24}} blurRadius={1}>
         <KeyboardAvoidingView style={styles.container}>
             <Text style={styles.titreApp}>Bunny Score</Text>
-            <View style={styles.blocBody} imageStyle={{opacity: 0.5}}>
+            <View style={styles.blocBody} >
                 <Text style={styles.text}>Bienvenue dans Bunny Score.</Text>
                 <Text style={styles.text}>Avec cette application, tu peux :</Text>
                 <Text style={styles.text}>Créer une nouvelle partie</Text>
@@ -44,7 +43,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     blocBody: {
-        backgroundColor: "white",
+
         width: 350,
         height: "50%",
         justifyContent: "center",

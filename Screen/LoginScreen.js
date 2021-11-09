@@ -1,15 +1,52 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, TextInput, KeyboardAvoidingView, Button, Touchable, TouchableOpacity, ImageBackground } from 'react-native';
 import InteractiveTextInput from "react-native-text-input-interactive";
+import SignUpScreen from "./SignUpScreen.js"
+import { supabase } from '../supabaseClient.js';
 
 const LoginScreen = props => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  const [auth, setAuth] = useState(false);
+
+  useEffect(() => {
+    setAuth(supabase.auth.session());
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      console.log(session);
+      setAuth(session);
+    });
+  })
+
+  const checkAuth = (username, password) => {
+    /*const user = async () => await supabase.from('Users').select(username, password);
+    if (user==null){
+      console.log("Le compte n'existe pas")
+    } else {
+      console.log("le compte existe")
+    }*/
+    const user = async () => await supabase.auth.signIn({
+      username: username,
+    })
+    console.log("user", supabase.auth.user())
+  }
 
   const goToWelcome = () => {
-    props.navigation.navigate("Welcome");
+    console.log("pseudo: ", username)
+    console.log("mot de passe: ", password)
+
+    //checkAuth(username, password);
+
+    if (auth==true){
+      props.navigation.navigate("Welcome");
+    } else {
+      props.navigation.navigate("Login");
+    }
+  }
+  const goToSignUp = () => {
+    props.navigation.navigate("SignUp");
   }
 
     return (
@@ -32,7 +69,7 @@ const LoginScreen = props => {
       <View style={styles.noAccount}>
         <Text style={styles.text}> Vous n'avez pas de compte ?</Text>
         <TouchableOpacity 
-            onPress={() => {}}
+            onPress={goToSignUp}
             style={styles.signUpButton}
           >
             <Text style={styles.buttonText}>S'inscrire</Text>
