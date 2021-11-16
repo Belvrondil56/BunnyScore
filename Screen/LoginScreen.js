@@ -1,62 +1,39 @@
-import React, { Component, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, TextInput, KeyboardAvoidingView, Button, Touchable, TouchableOpacity, ImageBackground } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, ImageBackground } from 'react-native';
 import InteractiveTextInput from "react-native-text-input-interactive";
-import SignUpScreen from "./SignUpScreen.js"
 import { supabase } from '../supabaseClient.js';
 
-const LoginScreen = props => {
+
+
+const LoginScreen = ({setPageRegister, setAuth}) => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const [auth, setAuth] = useState(false);
-
-  useEffect(() => {
-    setAuth(supabase.auth.session());
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      console.log(session);
-      setAuth(session);
-    });
-  })
-
-  const checkAuth = (username, password) => {
-    /*const user = async () => await supabase.from('Users').select(username, password);
-    if (user==null){
-      console.log("Le compte n'existe pas")
-    } else {
-      console.log("le compte existe")
-    }*/
-    const user = async () => await supabase.auth.signIn({
-      username: username,
+  async function checkAuth (username, password) {
+    console.log("username:", username)
+    const { user, session, error } = await supabase.auth.signIn({
+      email: username,
+      password: password
     })
-    console.log("user", supabase.auth.user())
   }
 
   const goToWelcome = () => {
-    console.log("pseudo: ", username)
-    console.log("mot de passe: ", password)
-
-    //checkAuth(username, password);
-
-    if (auth==true){
-      props.navigation.navigate("Welcome");
-    } else {
-      props.navigation.navigate("Login");
-    }
+    checkAuth(username, password);
+    setAuth(supabase.auth.user())
   }
   const goToSignUp = () => {
-    props.navigation.navigate("SignUp");
+    setPageRegister(true);
   }
 
     return (
     <ImageBackground source={require("../assets/torpilleurlapin.jpg")} style={ styles.imgBackground } resizeMode='cover' imageStyle= 
   {{opacity:0.24}} blurRadius={1}>
       <KeyboardAvoidingView style={styles.container}>
-      
         <Text style={styles.titreApp}>Bunny Score</Text>
         <View style={styles.inputContainer} >
-          <InteractiveTextInput style= {styles.input} placeholder="Entrez votre identifiant" onChangeText={username => setUsername(username)} defaultValue={username} style={{padding: 15}}/><InteractiveTextInput style= {styles.input} placeholder="Entrez votre mot de passe" onChangeText={password => setPassword(password)} defaultValue={password}/>
+          <InteractiveTextInput style= {styles.input} placeholder="Entrez votre identifiant" onChangeText={username => setUsername(username)} defaultValue={username} style={{padding: 15}}/>
+          <InteractiveTextInput secureTextEntry={true} style= {styles.input} placeholder="Entrez votre mot de passe" onChangeText={password => setPassword(password)} defaultValue={password}/>
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
             onPress={goToWelcome}

@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     blocBody: {
-
         width: 350,
         height: "50%",
         justifyContent: "center",

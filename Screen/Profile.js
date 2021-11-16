@@ -1,6 +1,7 @@
 import React from "react";
 import {View, Text, StyleSheet, ImageBackground, TouchableOpacity, KeyboardAvoidingView, Image} from "react-native";
 import { supabase } from "../supabaseClient";
+import {LoginScreen} from "./LoginScreen"
 
 const Profile = props => {
 
@@ -11,7 +12,8 @@ const Profile = props => {
 
 
     const signOut = async () => {
-        await supabase.auth.signOut()
+        await supabase.auth.signOut();
+        console.log("auth", supabase.auth.user());
     }
 
     return(

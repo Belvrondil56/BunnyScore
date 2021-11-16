@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, Image, TextInput, KeyboardAvoidingView, Button,
 import InteractiveTextInput from "react-native-text-input-interactive";
 import { supabase } from '../supabaseClient';
 
-const SignUpScreen = props => {
+const SignUpScreen = ({setAuth, setPageRegister}) => {
 
   const [email, setEmail] = useState('');
   const [pseudo, setPseudo] = useState('');
@@ -36,27 +36,35 @@ const SignUpScreen = props => {
       console.log(error?.message);
       return;
     }
+  }
 
-    
-
+  const returnPage = () => {
+    setPageRegister(false);
   }
 
     return (
     <ImageBackground source={require("../assets/torpilleurlapin.jpg")} style={ styles.imgBackground } resizeMode='cover' imageStyle= 
   {{opacity:0.24}} blurRadius={1}>
       <KeyboardAvoidingView style={styles.container}>
-      
         <Text style={styles.titreApp}>Bunny Score</Text>
         <View style={styles.inputContainer} >
           <InteractiveTextInput style= {styles.input} placeholder="Entrez un pseudo" onChangeText={pseudo => setPseudo(pseudo)} defaultValue=     {pseudo} style={{padding: 15}}/>
           <InteractiveTextInput style= {styles.input} placeholder="Entrez un email" onChangeText={email => setEmail(email)} defaultValue={email} style={{padding: 15}}/>
-          <InteractiveTextInput style= {styles.input} placeholder="Entrez un mot de passe" onChangeText={password => setPassword(password)} defaultValue={password}/>
+          <InteractiveTextInput secureTextEntry={true} style= {styles.input} placeholder="Entrez un mot de passe" onChangeText={password => setPassword(password)} defaultValue={password}/>
         <View style={styles.buttonContainer}>
           <TouchableOpacity 
             onPress={handleSignUp}
             style={styles.button}
           >
             <Text style={styles.buttonText}>Créer le compte</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            onPress={returnPage}
+            style={styles.button}
+          >
+            <Text style={styles.buttonText}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>
