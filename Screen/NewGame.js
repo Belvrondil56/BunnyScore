@@ -19,7 +19,9 @@ const NewGame = props => {
     const [player4Points, setPlayer4Points] = useState(null);
     const [nbrPlayer, setNbrPlayer] = useState(2);
     const [players, setPlayers] = useState([]);
-    const [scores, setScores] = useState(false);
+    const [resultatBDD, setResultatBDD] = useState(null);
+    const [scores, setScores] = useState(null);
+    const [resultat, setResultat] = useState(false);
 
 
     const handleAddNewPlayer3 = () => {
@@ -43,37 +45,43 @@ const NewGame = props => {
         setPlayer4Points(null);
     }
 
-    function checkPlayer(players){
+    async function addPlayer(player){
+        console.log("player ajouté: ", player)
+        const uuidconst = uuid.v4();
+            const {data, error} = await supabase.from("profiles")
+            .insert([{
+                id: uuidconst,
+                username: player,
+                invited: true
+            }])
+    }
+
+    function checkPlayer(){
         players.forEach(player => {
-            if(supabase.from('profiles').select('username').eq('username', player) != null){
-                console.log('joueur inscrit : ', player)
+            getData2(player)
+            if(resultat==true){
+                console.log("resultat : ", player)
             }
-            else {
-                supabase.from("profile").insert([{
-                    id: uuid.v4(),
-                    username: player,
-                    invited: true
-                }])
+            else if (resultat==false){
+                addPlayer(player)
             }
         })
     }
 
-    async function getData() {
-        
-        const {data, error} = await supabase.from('profiles').select('username')
-
-        if (data!=null){
-            console.log("le pseudo existe")
-        }
-        else {
-            console.log("le pseudo n'existe pas")
-        }
-        return data;
+    async function getData2(player){
+        const {data: profiles, error} = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('username', player)
+            .single();
+            console.log("profiles non parsé: ", profiles)
+            if (profiles!=null){
+                setResultat(true)
+            }
+            else if (profiles==null){
+                setResultat(false)
+            }
     }
-
-    useEffect (() => {
-
-    })
 
     function checkPlayerList(){
         setPlayers([...players, player1])
@@ -84,49 +92,48 @@ const NewGame = props => {
         if (newPlayer4==true){
             setPlayers(players => [...players, player4])
         }
-        
+        checkPlayer();
     }
-
-    async function handleSaveGame(){
+    
+    async function addGame(){
         /*const {game, error} = await supabase.from("game").insert([
             {
               nbr_players: nbrPlayer
             },
           ]);
-          
+
           if (error){
             console.log(error?.message);
-            return;
           }*/
-        //const {data, error2} = await supabase.from('profiles').select();
+        const tab = []
         
-        haveScore();
-        
-        checkPlayerList();
+        players.forEach(player => {
+            async () => {
+                let {data: profiles, error} = await supabase.from('profiles').select('id').eq('username', player);
+                console.log("résultats:", profiles[0]);
+            }
             
+        })
         
-        //checkPlayer()
+        
 
-
-        // Créé un tableau avec la liste de joueurs dans la bdd et vérifie si ceux de la partie existent dedans
-        /*const playerList = [];
-        players.forEach(element => playerList.push(element.username))
-        console.log(playerList)
-        const verif = playerList.includes(player2)
-        console.log("verif :", verif)*/
-
-        //Ajouter un joueur invité
-        /*const {player, error} = await supabase.from('profiles').insert([
+        /*const {gamePlayer, error2} = await supabase.from("player_game").insert([
             {
-                id: uuid.v4(),
-                username: player2,
-                invited: true
+              
             },
-        ]);
-        if (error){
-            console.log(error?.message);
-            return;
-        }*/
+          ]);
+          
+          if (error2){
+            console.log(error2?.message);
+          }*/
+    }
+
+    async function handleSaveGame(){
+
+        
+        //haveScore();
+        addGame();
+        
     }
 
     function haveScore() {
@@ -139,8 +146,10 @@ const NewGame = props => {
         } else {
             setScores(false);
         }
+        checkPlayerList();
     }
-    console.log(players);
+
+
     return(
         <ImageBackground source={require("../assets/lapinGold.jpg")} style={ styles.imgBackground } resizeMode='cover' imageStyle= 
             {{opacity:0.24}} blurRadius={1}>
