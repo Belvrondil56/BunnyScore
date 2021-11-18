@@ -47,33 +47,23 @@ const NewGame = props => {
         setPlayer4Points(null);
     }
 
-    
-
-    
+    useEffect(() => {
+        console.log("Tableau de joueurs :", players)
+      }), [players]
 
     async function addGame(){
-        players.forEach(player => {
-            searchPlayerById(player)
-            console.log("player id : ", resultatBDD)
-        })
 
-    async function searchPlayerById(player){
-        const {data: profiles, error} = await supabase.from('profiles').select('id').eq('username', player);
-        console.log(profiles[0].id)
-        setResultatBDD(res => [...res, profiles[0].id])
-    }    
-        /*const {game, error} = await supabase.from("game").insert([
+        const {game: data, error} = await supabase.from("game").insert([
             {
+              id: 1,
+              created_at: new Date(),
               nbr_players: nbrPlayer
             },
-          ]);
+          ]).select('id')
 
           if (error){
             console.log(error?.message);
-          }*/
-
-        
-
+          }
 
         /*const {gamePlayer, error2} = await supabase.from("player_game").insert([
             {
@@ -84,6 +74,16 @@ const NewGame = props => {
           if (error2){
             console.log(error2?.message);
           }*/
+        players.forEach(player => {
+            searchPlayerById(player)
+            console.log("player id : ", resultatBDD)
+        })
+
+    async function searchPlayerById(player){
+        const {data: profiles, error} = await supabase.from('profiles').select('id').eq('username', player);
+        console.log(profiles[0].id)
+        setResultatBDD(res => [...res, profiles[0].id])
+    }    
     }
 
     async function handleSaveGame(){
@@ -127,13 +127,13 @@ const NewGame = props => {
         setPlayers(tempTab)
     }
 
-    async function checkPlayer(){
+    function checkPlayer(){
         players.forEach(player => {
             getData2(player)
-            if(resultat==true){
+            if(resultat){
                 console.log("resultat : ", player)
             }
-            else if (resultat==false){
+            else {
                 addPlayer(player)
             }
         })
@@ -157,16 +157,12 @@ const NewGame = props => {
             .select('username')
             .eq('username', player)
             .single();
-            if (profiles!=null){
-                tempRes = true
-            }
-            else if (profiles==null){
+            if (profiles==null){
                 tempRes = false
             }
             setResultat(tempRes)
     }
 
-    console.log("Tableau de joueurs :",players)
     return(
         <ImageBackground source={require("../assets/lapinGold.jpg")} style={ styles.imgBackground } resizeMode='cover' imageStyle= 
             {{opacity:0.24}} blurRadius={1}>
