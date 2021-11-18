@@ -6,6 +6,8 @@ import uuid from 'react-native-uuid';
 
 const NewGame = props => {
 
+    console.log("refresh")
+
     const [scroll, setScroll] = useState(false);
     const [newPlayer3, setNewPlayer3] = useState(null);
     const [newPlayer4, setNewPlayer4] = useState(null);
@@ -19,7 +21,7 @@ const NewGame = props => {
     const [player4Points, setPlayer4Points] = useState(null);
     const [nbrPlayer, setNbrPlayer] = useState(2);
     const [players, setPlayers] = useState([]);
-    const [resultatBDD, setResultatBDD] = useState(null);
+    const [resultatBDD, setResultatBDD] = useState([]);
     const [scores, setScores] = useState(null);
     const [resultat, setResultat] = useState(false);
 
@@ -45,57 +47,21 @@ const NewGame = props => {
         setPlayer4Points(null);
     }
 
-    async function addPlayer(player){
-        console.log("player ajouté: ", player)
-        const uuidconst = uuid.v4();
-            const {data, error} = await supabase.from("profiles")
-            .insert([{
-                id: uuidconst,
-                username: player,
-                invited: true
-            }])
-    }
-
-    function checkPlayer(){
-        players.forEach(player => {
-            getData2(player)
-            if(resultat==true){
-                console.log("resultat : ", player)
-            }
-            else if (resultat==false){
-                addPlayer(player)
-            }
-        })
-    }
-
-    async function getData2(player){
-        const {data: profiles, error} = await supabase
-            .from('profiles')
-            .select('username')
-            .eq('username', player)
-            .single();
-            console.log("profiles non parsé: ", profiles)
-            if (profiles!=null){
-                setResultat(true)
-            }
-            else if (profiles==null){
-                setResultat(false)
-            }
-    }
-
-    function checkPlayerList(){
-        setPlayers([...players, player1])
-        setPlayers(players => [...players, player2])
-        if(newPlayer3==true){
-            setPlayers(players => [...players, player3])
-        } 
-        if (newPlayer4==true){
-            setPlayers(players => [...players, player4])
-        }
-        checkPlayer();
-    }
     
+
+    
+
     async function addGame(){
+        players.forEach(player => {
+            searchPlayerById(player)
+            console.log("player id : ", resultatBDD)
+        })
+
+    async function searchPlayerById(player){
+        const {data: profiles, error} = await supabase.from('profiles').select('id').eq('username', player);
+        console.log(profiles[0].id)
+        setResultatBDD(res => [...res, profiles[0].id])
+    }    
         /*const {game, error} = await supabase.from("game").insert([
             {
               nbr_players: nbrPlayer
@@ -105,17 +71,9 @@ const NewGame = props => {
           if (error){
             console.log(error?.message);
           }*/
-        const tab = []
+
         
-        players.forEach(player => {
-            async () => {
-                let {data: profiles, error} = await supabase.from('profiles').select('id').eq('username', player);
-                console.log("résultats:", profiles[0]);
-            }
-            
-        })
-        
-        
+
 
         /*const {gamePlayer, error2} = await supabase.from("player_game").insert([
             {
@@ -130,26 +88,85 @@ const NewGame = props => {
 
     async function handleSaveGame(){
 
-        
-        //haveScore();
-        addGame();
-        
-    }
-
-    function haveScore() {
-        if(nbrPlayer==2 && player1Points>0 && player2Points>0){
-            setScores(true);
-        } else if (nbrPlayer==3 && player1Points>0 && player2Points>0 && (player3Points>0 || player4Points>0)){
-            setScores(true);
-        } else if (nbrPlayer==4 && player1Points>0 && player2Points>0 && player3Points>0 && player4Points>0){
-            setScores(true);
-        } else {
-            setScores(false);
-        }
+        console.log("bonjour")
+        await haveScore();
         checkPlayerList();
+        if(players!=[]){       
+            checkPlayer();
+            addGame();
+        } else {
+            console.log("dommage")
+        }
     }
 
+    async function haveScore() {
+        let tempScores = true;
+        if(nbrPlayer==2 && player1Points>0 && player2Points>0){
+            tempScores = true;
+        } else if (nbrPlayer==3 && player1Points>0 && player2Points>0 && (player3Points>0 || player4Points>0)){
+            tempScores = true;
+        } else if (nbrPlayer==4 && player1Points>0 && player2Points>0 && player3Points>0 && player4Points>0){
+            tempScores = true;
+        } else {
+            tempScores = false;
+        }
+        setScores(tempScores);
+        console.log("Scores : ",scores)
+    }
 
+    async function checkPlayerList(){
+        let tempTab = []
+        tempTab.push(player1)
+        tempTab.push(player2)
+        if(newPlayer3==true){
+            tempTab.push(player3)
+        } 
+        if (newPlayer4==true){
+            tempTab.push(player4)
+        }
+        setPlayers(tempTab)
+    }
+
+    async function checkPlayer(){
+        players.forEach(player => {
+            getData2(player)
+            if(resultat==true){
+                console.log("resultat : ", player)
+            }
+            else if (resultat==false){
+                addPlayer(player)
+            }
+        })
+    }
+
+    async function addPlayer(player){
+        console.log("player ajouté: ", player)
+        const uuidconst = uuid.v4();
+            const {data, error} = await supabase.from("profiles")
+            .insert([{
+                id: uuidconst,
+                username: player,
+                invited: true
+            }])
+    }
+
+    async function getData2(player){
+        let tempRes = true
+        const {data: profiles, error} = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('username', player)
+            .single();
+            if (profiles!=null){
+                tempRes = true
+            }
+            else if (profiles==null){
+                tempRes = false
+            }
+            setResultat(tempRes)
+    }
+
+    console.log("Tableau de joueurs :",players)
     return(
         <ImageBackground source={require("../assets/lapinGold.jpg")} style={ styles.imgBackground } resizeMode='cover' imageStyle= 
             {{opacity:0.24}} blurRadius={1}>
